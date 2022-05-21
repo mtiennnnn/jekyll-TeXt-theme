@@ -1,5 +1,4 @@
 ---
-layout: post
 title: "AnstrongCTF 2022 - Caasio PSE"
 author: "mtiennnnn"
 tags: js misc
