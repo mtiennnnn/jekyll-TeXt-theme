@@ -1,11 +1,11 @@
 ---
-title: "AnstrongCTF 2022 - Caasio PSE"
+title: "AngstromCTF 2022 - Caasio PSE"
 author: "mtiennnnn"
 tags: js misc
 ---
 
 # Description
-This is a challenge about _escape js vm_ in AnstrongCTF 2022.
+This is a challenge about _escape js vm_ in AnstromCTF 2022.
 
 ![image](https://user-images.githubusercontent.com/75429369/169534308-b7189ea9-8d48-49c4-b629-78564ee942f8.png)
 
