@@ -43,7 +43,7 @@ Connection: close
 
 Hmm, như vậy có thể suy luận: lúc mình nhấn `export` thì web đã gửi một POST request với data là `svg`, sau đấy từ data svg ấy sẽ tạo ra ảnh `png` và lưu lại với tên file gì gì đấy `.png` trong mục `exports`. Từ đây sẽ có một hướng suy nghĩ là cái data svg này mình hoàn toàn có thể điều chỉnh được và file svg đổi thành png ấy hoàn toàn được lưu trên server nên ta có thể dùng nó dể gây lỗi.
 
-Tới đây thì mình đi tìm xem cái `svg to png` (hay đại loại vậy) có bị lỗi bảo mật đã bị report trên mạng đã có hay chưa để giải bài này, vì ai chơi Hackthebox cũng biết rằng site này rất thích ra challenge có lỗi dựa trên việc sử dụng những module hay thư viện nào đấy phiên bản cũ. Mình tìm được khá nhiều nguồn và cuối cùng tìm được bài [này](https://security.snyk.io/vuln/SNYK-JS-CONVERTSVGCORE-1582785). Trang này viết như sau:
+Tới đây thì mình đi tìm xem cái `svg to png` (hay đại loại vậy) có bị lỗi bảo mật đã bị report trên mạng đã có hay chưa để giải bài này, vì ai chơi Hackthebox cũng biết rằng site này rất thích ra challenge có lỗi dựa trên việc sử dụng những module hay thư viện nào đấy phiên bản cũ. Mình tìm được khá nhiều nguồn và cuối cùng tìm được bài [này](https://security.snyk.io/vuln/SNYK-JS-CONVERTSVGCORE-1582785). Đại khái là packet `convert-svg-core`có bug. Trang này viết như sau:
 
 ![image](https://user-images.githubusercontent.com/75429369/171794796-168e7d66-9f46-4914-ac6d-e5404b4bfbc3.png)
 
@@ -63,6 +63,56 @@ Access để xem có gì nào
 
 ![image](https://user-images.githubusercontent.com/75429369/171794287-5901d24a-237b-418b-a77d-3e671db2fd53.png)
 
-Yay, vậy là POC hoạt động mượt :))
+Yay đọc được etc/passwd, vậy là POC hoạt động mượt :))
 
-t
+Tới đây mình mới ngồi mò làm cố gắng tìm đường rce các thứ nhưng tất cả đều vô dụng, mình quyết định hỏi hint của một anh bạn chơi chung và được 1 hint là đi đọc source code đi (cảm ơn bạn rất nhiều luôn). Thì ok, mình đọc source, những bài js của hackthebox (và nhiều giải khác) sẽ có workdir là `/app`, thì mình thử đọc `/app/index.js` thôi.
+
+![image](https://user-images.githubusercontent.com/75429369/171825288-84d057cd-bf25-474d-95aa-f342540460cf.png)
+
+index.js
+```js
+const express = require('express');
+const session = require('cookie-session');
+const app = express ;
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const nunjucks = require('nunjucks');
+const routes = require('./routes');
+const Database = require('./database');
+
+const db = new Database('database.db');
+
+app.use(express.json({limit: '2mb'})); 
+app.use(cookieParser(); 
+
+require('dotenv').config({ path: '/app/.env'}); 
+app.use(Session({
+	name: 'session',
+	keys: [process.env.SESSION_SECRET_KEY] 
+}))
+
+nunjucks.configure('views', {
+	autoescape: true,
+	express: app 
+});
+
+app.set('views', './views'); 
+app.use('/static', express.static(path.resolve('static')));
+app.use('/exports', express.static(path.resolve('exports')));
+
+app.use(routes (db));
+
+app.all('*', (req, res) => { 
+	return res.status (404).send({
+		message: '404 page not found'
+	});
+});
+
+(async () => {
+	await db.connect();
+	await db.migrate();
+	app.listen(1337, '0.0.0.0', () => console.log('Listening on port 1337'));
+})();
+```
+_Note: source có thể không giống 100% tại mình copy bằng blackbox nên sợ không đúng, mong các bạn thông cảm_
+
