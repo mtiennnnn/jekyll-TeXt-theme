@@ -69,7 +69,7 @@ Tới đây mình mới ngồi mò làm cố gắng tìm đường rce các th�
 
 ![image](https://user-images.githubusercontent.com/75429369/171825288-84d057cd-bf25-474d-95aa-f342540460cf.png)
 
-index.js
+/index.js
 ```js
 const express = require('express');
 const session = require('cookie-session');
