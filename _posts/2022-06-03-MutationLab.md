@@ -9,14 +9,17 @@ tags: web js cookie convert-svg-core
 
 # Information Gathering
 Mới vào thì web sẽ hiện cho ta một form đăng kí, đăng nhập như sau:
+
 ![image](https://user-images.githubusercontent.com/75429369/171791521-df1d7302-4033-4fe8-8c3d-a32eaca40643.png)
 
 Không có gì đặc biệt ở đây cả, mình sẽ đăng nhập vào để xem bên trong có gì:
+
 ![image](https://user-images.githubusercontent.com/75429369/171791819-ba3f76ab-8782-47f2-a85d-6a185f307a11.png)
 
-Giao diện trong khá ảo ma nhỉ, ta có thể rê chuột vào 2 cái hình động kia sẽ có hoạt ảnh trong rất thú vị. 
+Giao diện trong khá ảo ma nhỉ, ta có thể rê chuột vào 2 cái hình động kia sẽ có hoạt ảnh trông rất thú vị. 
 
 Mình thử nút `Export` bên dưới xem có gì hay ho không.
+
 ![image](https://user-images.githubusercontent.com/75429369/171791974-45801b11-3881-4825-872b-9d92bd590f1d.png)
 
 Web đã xuất ra một bức ảnh `.png` và có uri exports để lưu bức ảnh này, cùng xem thử trong quá trình export đã có request như thế nào.
@@ -41,8 +44,8 @@ Connection: close
 Hmm, như vậy có thể suy luận: lúc mình nhấn `export` thì web đã gửi một POST request với data là `svg`, sau đấy từ data svg ấy sẽ tạo ra ảnh `png` và lưu lại với tên file gì gì đấy `.png` trong mục `exports`. Từ đây sẽ có một hướng suy nghĩ là cái data svg này mình hoàn toàn có thể điều chỉnh được và file svg đổi thành png ấy hoàn toàn được lưu trên server nên ta có thể dùng nó dể gây lỗi.
 
 Tới đây thì mình đi tìm xem cái `svg to png` (hay đại loại vậy) có bị lỗi bảo mật đã bị report trên mạng đã có hay chưa để giải bài này, vì ai chơi Hackthebox cũng biết rằng site này rất thích ra challenge có lỗi dựa trên việc sử dụng những module hay thư viện nào đấy phiên bản cũ. Mình tìm được khá nhiều nguồn và cuối cùng tìm được bài [này](https://security.snyk.io/vuln/SNYK-JS-CONVERTSVGCORE-1582785). Trang này viết như sau:
-![image](https://user-images.githubusercontent.com/75429369/171794796-168e7d66-9f46-4914-ac6d-e5404b4bfbc3.png)
 
+![image](https://user-images.githubusercontent.com/75429369/171794796-168e7d66-9f46-4914-ac6d-e5404b4bfbc3.png)
 
 >"Affected versions of this package are vulnerable to Directory Traversal. Using a specially crafted SVG file, an attacker could read arbitrary files from the file system and then show the file content as a converted PNG file."
 
@@ -57,6 +60,9 @@ Dòng trên đọc khá là đúng hướng làm của bài này, có sẵn POC 
 ![image](https://user-images.githubusercontent.com/75429369/171794237-2d484fa3-0798-4afe-a965-5ef7f755e61a.png)
 
 Access để xem có gì nào
+
 ![image](https://user-images.githubusercontent.com/75429369/171794287-5901d24a-237b-418b-a77d-3e671db2fd53.png)
 
-Yay, vậy là poc hoạt động rất mượt :)),  
+Yay, vậy là POC hoạt động mượt :))
+
+t
