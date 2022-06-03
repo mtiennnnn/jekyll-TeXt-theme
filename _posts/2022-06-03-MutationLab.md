@@ -41,7 +41,8 @@ Connection: close
 Hmm, như vậy có thể suy luận: lúc mình nhấn `export` thì web đã gửi một POST request với data là `svg`, sau đấy từ data svg ấy sẽ tạo ra ảnh `png` và lưu lại với tên file gì gì đấy `.png` trong mục `exports`. Từ đây sẽ có một hướng suy nghĩ là cái data svg này mình hoàn toàn có thể điều chỉnh được và file svg đổi thành png ấy hoàn toàn được lưu trên server nên ta có thể dùng nó dể gây lỗi.
 
 Tới đây thì mình đi tìm xem cái `svg to png` (hay đại loại vậy) có bị lỗi bảo mật đã bị report trên mạng đã có hay chưa để giải bài này, vì ai chơi Hackthebox cũng biết rằng site này rất thích ra challenge có lỗi dựa trên việc sử dụng những module hay thư viện nào đấy phiên bản cũ. Mình tìm được khá nhiều nguồn và cuối cùng tìm được bài [này](https://security.snyk.io/vuln/SNYK-JS-CONVERTSVGCORE-1582785). Trang này viết như sau:
-![image](https://user-images.githubusercontent.com/75429369/171794192-589a8ca8-1a78-4d1c-8d8f-aeca4c807947.png)
+![image](https://user-images.githubusercontent.com/75429369/171794796-168e7d66-9f46-4914-ac6d-e5404b4bfbc3.png)
+
 
 >"Affected versions of this package are vulnerable to Directory Traversal. Using a specially crafted SVG file, an attacker could read arbitrary files from the file system and then show the file content as a converted PNG file."
 
