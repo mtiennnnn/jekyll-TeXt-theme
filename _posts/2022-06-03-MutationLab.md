@@ -65,11 +65,11 @@ Access để xem có gì nào
 
 Yay đọc được etc/passwd, vậy là POC hoạt động mượt :))
 
-Tới đây mình mới ngồi mò làm cố gắng tìm đường rce các thứ nhưng tất cả đều vô dụng, mình quyết định hỏi hint của một anh bạn chơi chung và được 1 hint là đi đọc source code đi (cảm ơn bạn rất nhiều luôn). Thì ok, mình đọc source, những bài js của hackthebox (và nhiều giải khác) sẽ có workdir là `/app`, thử đọc `/app/index.js`:
+Tới đây mình mới ngồi mò làm cố gắng tìm đường rce các thứ nhưng tất cả đều vô dụng vì cũng chưa có nhiều thông tin gì, nên mình ngồi fuzz source. Sau một hồi thì mình tìm được `/app/index.js`:
 
 ![image](https://user-images.githubusercontent.com/75429369/171825288-84d057cd-bf25-474d-95aa-f342540460cf.png)
 
-/index.js
+app/index.js
 ```js
 const express = require('express');
 const session = require('cookie-session');
