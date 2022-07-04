@@ -12,7 +12,7 @@ Mới vào thì web sẽ hiện cho ta một form đăng kí, đăng nhập như
 
 ![image](https://user-images.githubusercontent.com/75429369/171791521-df1d7302-4033-4fe8-8c3d-a32eaca40643.png)
 
-Không có gì đặc biệt ở đây cả, mình sẽ đăng nhập vào để xem bên trong có gì:
+Sau một hồi thử sqli thì không có gì đặc biệt cả, mình sẽ đăng nhập vào để xem bên trong có gì:
 
 ![image](https://user-images.githubusercontent.com/75429369/171791819-ba3f76ab-8782-47f2-a85d-6a185f307a11.png)
 
