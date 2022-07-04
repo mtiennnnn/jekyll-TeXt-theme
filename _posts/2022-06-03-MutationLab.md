@@ -65,7 +65,7 @@ Access để xem có gì nào
 
 Yay đọc được etc/passwd, vậy là POC hoạt động mượt :))
 
-Tới đây mình mới ngồi mò làm cố gắng tìm đường rce các thứ nhưng tất cả đều vô dụng vì cũng chưa có nhiều thông tin gì, nên mình ngồi fuzz source. Sau một hồi thì mình tìm được `/app/index.js`:
+T `/app/index.js`:
 
 ![image](https://user-images.githubusercontent.com/75429369/171825288-84d057cd-bf25-474d-95aa-f342540460cf.png)
 
@@ -124,7 +124,7 @@ Yes, vậy có thể hình dung được ta sẽ dùng SECRET KEY này để gen
 
 ![image](https://user-images.githubusercontent.com/75429369/171844465-60638acb-6ba5-4671-99fc-3d86ddb049b0.png)
 
-`session` thì khi decode bằng base64 thì ta được `{"username":"mtiennnnn"}` -> đúng như username dùng để đăng kí và đăng nhập, còn `session.sig` có vẻ như được generate từ session. Vậy thì giờ chỉ cần tìm xem còn username nào có thể đọc được flag. Nhớ lại thì trong `index.js` còn include `./routes`, check thử `./routes/index.js` xem có gì nhé
+`session` thì khi decode bằng base64 thì ta được `{"username":"mtiennnnn"}` -> đúng như username dùng để đăng kí và đăng nhập, còn `session.sig` có vẻ như được generate từ session. Vậy thì giờ chỉ cần tìm xem còn username nào có thể đọc được flag. Check thử `./routes/index.js` thì thấy
 
 ![image](https://user-images.githubusercontent.com/75429369/171844999-50237d26-eb74-47ba-9d44-03f8e9491f42.png)
 
