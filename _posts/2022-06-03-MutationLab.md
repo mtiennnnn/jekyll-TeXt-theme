@@ -203,7 +203,7 @@ _Note: source có thể không giống 100% tại mình copy bằng blackbox nê
 
 Lần đầu tiên trong bài, ta thấy sự hiện diện của `flag`, vậy với `username` là `admin` thì web sẽ render flag ra cho ta (nghe ez vãi). But wait, username thì ta biết có thể tùy chỉnh từ cookie `session`, vậy còn `session.sig` ???  Như đã nói ở trên, vì chúng ta đã tìm được SESSION_SECRET_KEY, với SECRET KEY đó ta có thể sign ra bất cứ session cookie nào ta mong muốn. Vậy thì mục tiêu cuối cùng của bài sẽ là generate ra `session.sig` với username là `admin`.
 
-Tận dụng code có sẵn của bài, ta sẽ tự generate cookie session.sig ở local rồi sử dụng nó lên web chính thì sẽ lụm tiền. Script generate:
+Tận dụng code có sẵn của bài, ta sẽ tự generate cookie session.sig ở local rồi sử dụng nó lên web chính thì sẽ lấy được flag. Script generate:
 
 script app.js
 ```js
