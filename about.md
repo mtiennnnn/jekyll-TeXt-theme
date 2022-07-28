@@ -27,6 +27,4 @@ key: page-about
 ---
 
 Hello guys, I'm Tien Luong, I go to UIT. I love cybersecurity and willing to learn more.
-Hope you like my blog 👀
-
-> "Winners never quit and quitters never win!"
+Hope you guuys like my blog 👀, oh btw English is not my mother tongue so please excuse any errors on my part ♥
